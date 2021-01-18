@@ -88,6 +88,622 @@ A less variation in the cluster results in similar or homogeneous data points wi
 * It gives the local optima of the squared error function
 * Sometimes choosing the centroids randomly cannot give fruitful results
 
+```python
+df=pd.read_csv("Mall_Customers.csv")
+```
+
+
+```python
+df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CustomerID</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Annual Income (k$)</th>
+      <th>Spending Score (1-100)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>1</td>
+      <td>Male</td>
+      <td>19</td>
+      <td>15</td>
+      <td>39</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>Male</td>
+      <td>21</td>
+      <td>15</td>
+      <td>81</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>Female</td>
+      <td>20</td>
+      <td>16</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4</td>
+      <td>Female</td>
+      <td>23</td>
+      <td>16</td>
+      <td>77</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>5</td>
+      <td>Female</td>
+      <td>31</td>
+      <td>17</td>
+      <td>40</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+df.info()
+```
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 200 entries, 0 to 199
+    Data columns (total 5 columns):
+    CustomerID                200 non-null int64
+    Gender                    200 non-null object
+    Age                       200 non-null int64
+    Annual Income (k$)        200 non-null int64
+    Spending Score (1-100)    200 non-null int64
+    dtypes: int64(4), object(1)
+    memory usage: 7.9+ KB
+    
+
+
+```python
+df.describe()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CustomerID</th>
+      <th>Age</th>
+      <th>Annual Income (k$)</th>
+      <th>Spending Score (1-100)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>count</td>
+      <td>200.000000</td>
+      <td>200.000000</td>
+      <td>200.000000</td>
+      <td>200.000000</td>
+    </tr>
+    <tr>
+      <td>mean</td>
+      <td>100.500000</td>
+      <td>38.850000</td>
+      <td>60.560000</td>
+      <td>50.200000</td>
+    </tr>
+    <tr>
+      <td>std</td>
+      <td>57.879185</td>
+      <td>13.969007</td>
+      <td>26.264721</td>
+      <td>25.823522</td>
+    </tr>
+    <tr>
+      <td>min</td>
+      <td>1.000000</td>
+      <td>18.000000</td>
+      <td>15.000000</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <td>25%</td>
+      <td>50.750000</td>
+      <td>28.750000</td>
+      <td>41.500000</td>
+      <td>34.750000</td>
+    </tr>
+    <tr>
+      <td>50%</td>
+      <td>100.500000</td>
+      <td>36.000000</td>
+      <td>61.500000</td>
+      <td>50.000000</td>
+    </tr>
+    <tr>
+      <td>75%</td>
+      <td>150.250000</td>
+      <td>49.000000</td>
+      <td>78.000000</td>
+      <td>73.000000</td>
+    </tr>
+    <tr>
+      <td>max</td>
+      <td>200.000000</td>
+      <td>70.000000</td>
+      <td>137.000000</td>
+      <td>99.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+df.rename(columns={'Annual Income (k$)':'Income','Spending Score (1-100)':'SpendScore'},inplace=True)
+```
+
+
+```python
+df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CustomerID</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Income</th>
+      <th>SpendScore</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>1</td>
+      <td>Male</td>
+      <td>19</td>
+      <td>15</td>
+      <td>39</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>Male</td>
+      <td>21</td>
+      <td>15</td>
+      <td>81</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>Female</td>
+      <td>20</td>
+      <td>16</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4</td>
+      <td>Female</td>
+      <td>23</td>
+      <td>16</td>
+      <td>77</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>5</td>
+      <td>Female</td>
+      <td>31</td>
+      <td>17</td>
+      <td>40</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+sns.pairplot(df)
+```
+
+
+
+
+    <seaborn.axisgrid.PairGrid at 0x20d59430908>
+
+
+
+
+![png](output_7_1.png)
+
+**From the above diagram, we can say that the customer id is not correlated with income, it's not an useful feature so we can remove that.**
+
+
+```python
+df=df.drop(['CustomerID'],axis=1)
+```
+
+
+```python
+df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Income</th>
+      <th>SpendScore</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>Male</td>
+      <td>19</td>
+      <td>15</td>
+      <td>39</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Male</td>
+      <td>21</td>
+      <td>15</td>
+      <td>81</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Female</td>
+      <td>20</td>
+      <td>16</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Female</td>
+      <td>23</td>
+      <td>16</td>
+      <td>77</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Female</td>
+      <td>31</td>
+      <td>17</td>
+      <td>40</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+sns.heatmap(df.corr())
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x20d5a09e708>
+
+
+
+
+![png](output_10_1.png)
+
+
+
+```python
+plt.figure(figsize=(7,7))
+size=df['Gender'].value_counts()
+label=['Female','Male']
+color=['Pink','Blue']
+explode=[0,0.1]
+plt.pie(size,explode=explode,labels=label,colors=color,shadow=True)
+plt.legend()
+plt.show()
+```
+
+
+![png](output_11_0.png)
+
+**From the diagram we can say that females are more visiting to mall than males**
+
+
+```python
+plt.figure(figsize=(10,5))
+sns.countplot(df['Age'])
+plt.xticks(rotation=90)
+```
+
+
+
+
+    (array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+            17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+            34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]),
+     <a list of 51 Text xticklabel objects>)
+
+
+
+
+![png](output_12_1.png)
+
+**Peoples of age between 25 to 40 are mostly visiting mall than other age groups**
+
+```python
+sns.boxplot(df['Gender'],df['SpendScore'])
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x20d5a2f4848>
+
+
+
+
+![png](output_13_1.png)
+
+**This diagram shows the mean spendscore of female and male. we can observe that the mean average spend score of female is greater than male, they have higher spendscore than male,and their least spendscore is greater than males least spendscore**
+
+```python
+plt.figure(figsize=(15,5))
+sns.countplot(df['Income'])
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x20d593b9d08>
+
+
+
+
+![png](output_14_1.png)
+
+**Peoples of salary 54k and 78k are the mostly visited persons in mall.**
+
+
+```python
+plt.bar(df['Income'],df['SpendScore'])
+plt.title('Spendscore over income',fontsize=20)
+plt.xlabel('Income')
+plt.ylabel('Spendscore')
+```
+
+
+
+
+    Text(0, 0.5, 'Spendscore')
+
+
+
+
+![png](output_15_1.png)
+
+**Peoples of income in the range of 20k-40k and 70k-100k have the highest spend score**
+
+```python
+df.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Income</th>
+      <th>SpendScore</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>Male</td>
+      <td>19</td>
+      <td>15</td>
+      <td>39</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Male</td>
+      <td>21</td>
+      <td>15</td>
+      <td>81</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Female</td>
+      <td>20</td>
+      <td>16</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Female</td>
+      <td>23</td>
+      <td>16</td>
+      <td>77</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Female</td>
+      <td>31</td>
+      <td>17</td>
+      <td>40</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+
+```python
+label
+```
+
+
+
+
+    array([-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+           -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+           -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+           -1, -1, -1, -1, -1,  0,  0,  0,  0, -1, -1,  0, -1,  0, -1,  0,  0,
+           -1,  0, -1, -1,  0, -1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+            1,  1,  1, -1,  2,  1,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,
+            2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  3,  2,
+            3,  3, -1,  3, -1, -1,  4, -1, -1, -1,  4,  5,  4, -1,  4,  5, -1,
+            5,  4, -1,  4,  5, -1, -1,  6, -1, -1, -1,  7, -1,  6, -1,  6, -1,
+            7, -1,  6, -1,  7, -1,  7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+            8, -1,  8, -1,  8, -1,  8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+           -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], dtype=int64)
+
+
+
+
+
+
+    No of clusters: 9
+    
+# DBSCAN Cluster
+
+
+![png](output_24_0.png)
+
+*It is an unsupervised machine learning algorithm. It is used for clusters of high density. It automatically predicts the outliers and removes it. It is better than hierarchical and k-means clustering algorithm. It makes the clusters based on the parameters like epsilon,min points and noise.It separately predicts the core points, border points and outliers efficiently.*
+
+
+# HIERARCHICAL CLUSTERING
+    
+
+![png](output_26_0.png)
+
+
+
+![png](output_27_0.png)
+
+
+
+# K-means Clutering**
+    
+
+![png](output_29_0.png)
+
+
+![png](output_29_1.png)
+
+
+
 ## Steps to run the code
 1. Download and install Anaconda Navigator.
 1. Clone and extract contents of this repository.
