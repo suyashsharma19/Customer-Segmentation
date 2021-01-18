@@ -668,7 +668,7 @@ label
 
 
 
-# K-means Clutering**
+# K-means Clutering
     
 
 ![png](output_29_0.png)
