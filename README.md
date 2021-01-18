@@ -53,9 +53,9 @@ This way we go on grouping the data until one cluster is formed. Now on the basi
 
 
 ### Disadvantages
-*First, the algorithm can never undo any previous steps. So for example, the algorithm clusters 2 points, and later on we see that the connection was not a good one, the program cannot undo that step.
-*Second, the time complexity for the clustering can result in very long computation times, in comparison with efficient algorithms, such k-Means.
-*Finally, if we have a large dataset, it can become difficult to determine the correct number of clusters by the dendrogram.
+* First, the algorithm can never undo any previous steps. So for example, the algorithm clusters 2 points, and later on we see that the connection was not a good one, the program cannot undo that step.
+* Second, the time complexity for the clustering can result in very long computation times, in comparison with efficient algorithms, such k-Means.
+* Finally, if we have a large dataset, it can become difficult to determine the correct number of clusters by the dendrogram.
 
 
 ### K-means Clustering
