@@ -29,7 +29,7 @@ It is better than hierarchical and k-means clustering algorithm.
 It makes the clusters based on the parameters like epsilon,min points and noise.
 It separately predicts the core points, border points and outliers efficiently.
 
-###Advantages
+### Advantages
 * Is great at separating clusters of high density versus clusters of low density within a given dataset.
 * Is great with handling outliers within the dataset.
 
